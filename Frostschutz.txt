@@ -1,0 +1,234 @@
+<xml xmlns="https://developers.google.com/blockly/xml">
+  <variables>
+    <variable id="|o/zbN;k|eRCP(pBVcdv">Frostschutz_Aktiv</variable>
+    <variable type="timeout" id="Pumpenlaufzeit">Pumpenlaufzeit</variable>
+    <variable type="timeout" id="Wartezeit">Wartezeit</variable>
+  </variables>
+  <block type="variables_set" id="2T)]FGs(m=Au-KQb)`nl" x="38" y="15">
+    <field name="VAR" id="|o/zbN;k|eRCP(pBVcdv">Frostschutz_Aktiv</field>
+    <value name="VALUE">
+      <block type="logic_boolean" id="Msk6KE`p1?rY?i*(9_D6">
+        <field name="BOOL">FALSE</field>
+      </block>
+    </value>
+    <next>
+      <block type="on_ext" id="{OH;sm3D;(+gom#1O7E`">
+        <mutation xmlns="http://www.w3.org/1999/xhtml" items="1"></mutation>
+        <field name="CONDITION">ne</field>
+        <field name="ACK_CONDITION"></field>
+        <value name="OID0">
+          <shadow type="field_oid" id="Jb.a;_+(|]8Z((3D,{-^">
+            <field name="oid">0_userdata.0.Test.Tutorial.Temperatur</field>
+          </shadow>
+        </value>
+        <statement name="STATEMENT">
+          <block type="controls_if" id="NYp8L~WihG,#H[F^OC//">
+            <mutation elseif="1"></mutation>
+            <value name="IF0">
+              <block type="logic_operation" id="0ZnqGeNO-%Ez].7mOQx*" inline="false">
+                <field name="OP">AND</field>
+                <value name="A">
+                  <block type="logic_compare" id="WaBga8ykM15^,:{jQY#b">
+                    <field name="OP">LTE</field>
+                    <value name="A">
+                      <block type="on_source" id="%=u/(x[|!v7gkDpyFe7~">
+                        <field name="ATTR">state.val</field>
+                      </block>
+                    </value>
+                    <value name="B">
+                      <block type="math_number" id="Vd2#?n40uT7c?N+CDuSH">
+                        <field name="NUM">1</field>
+                      </block>
+                    </value>
+                  </block>
+                </value>
+                <value name="B">
+                  <block type="logic_negate" id="|H(~)`BD!po1p0rQE~||">
+                    <value name="BOOL">
+                      <block type="variables_get" id="0B8gLxs`vaW`R*X4IwNv">
+                        <field name="VAR" id="|o/zbN;k|eRCP(pBVcdv">Frostschutz_Aktiv</field>
+                      </block>
+                    </value>
+                  </block>
+                </value>
+              </block>
+            </value>
+            <statement name="DO0">
+              <block type="debug" id="%6_~tPkw~[c*OZ#-+Z9,">
+                <field name="Severity">log</field>
+                <value name="TEXT">
+                  <shadow type="text" id="x![z@Jix^wKO49P@{)ir">
+                    <field name="TEXT">Frostschutz ist aktiv.</field>
+                  </shadow>
+                </value>
+                <next>
+                  <block type="variables_set" id="8oDz!9?,%/5lt7ADs!Id">
+                    <field name="VAR" id="|o/zbN;k|eRCP(pBVcdv">Frostschutz_Aktiv</field>
+                    <value name="VALUE">
+                      <block type="logic_boolean" id="X9Lo,s`BWegTds*2VQvi">
+                        <field name="BOOL">TRUE</field>
+                      </block>
+                    </value>
+                    <next>
+                      <block type="procedures_callnoreturn" id="O3f$MYi]cJxc@2(zX#xY">
+                        <mutation name="Pumpenzyklus"></mutation>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </statement>
+            <value name="IF1">
+              <block type="logic_operation" id="4/%AD.k9GcniUj21cJ(J" inline="false">
+                <field name="OP">AND</field>
+                <value name="A">
+                  <block type="logic_compare" id="-?,K$ivK,*%msRjJ*?Q[">
+                    <field name="OP">GT</field>
+                    <value name="A">
+                      <block type="on_source" id="-ygn6:RQigr+w{13L!Vd">
+                        <field name="ATTR">state.val</field>
+                      </block>
+                    </value>
+                    <value name="B">
+                      <block type="math_number" id="4KzeYj.@H={@@0V/^Tik">
+                        <field name="NUM">1</field>
+                      </block>
+                    </value>
+                  </block>
+                </value>
+                <value name="B">
+                  <block type="variables_get" id="}4`A9iBK~(y_-6v@HNb^">
+                    <field name="VAR" id="|o/zbN;k|eRCP(pBVcdv">Frostschutz_Aktiv</field>
+                  </block>
+                </value>
+              </block>
+            </value>
+            <statement name="DO1">
+              <block type="debug" id="J[|kW=#^{yNslayf#X%/">
+                <field name="Severity">log</field>
+                <value name="TEXT">
+                  <shadow type="text" id="fT8XJ.a:m6c}.bJq+kTQ">
+                    <field name="TEXT">Temperatur größer 1°C. Frostschutz wird beendet. Pumpe wird ausgeschaltet</field>
+                  </shadow>
+                </value>
+                <next>
+                  <block type="variables_set" id="4[Mb:!(xSJY}CW,G$r?y">
+                    <field name="VAR" id="|o/zbN;k|eRCP(pBVcdv">Frostschutz_Aktiv</field>
+                    <value name="VALUE">
+                      <block type="logic_boolean" id="Lqq3$~|94!/3`|l%nD7@">
+                        <field name="BOOL">FALSE</field>
+                      </block>
+                    </value>
+                    <next>
+                      <block type="procedures_callnoreturn" id="9:|aY^xMua:(Qqs=6w2t">
+                        <mutation name="stopTimeouts"></mutation>
+                        <next>
+                          <block type="control" id="KFG`ibTy/9XQirrU.G,k">
+                            <mutation xmlns="http://www.w3.org/1999/xhtml" delay_input="false"></mutation>
+                            <field name="OID">0_userdata.0.Test.Tutorial.Pumpe_Switch</field>
+                            <field name="WITH_DELAY">FALSE</field>
+                            <value name="VALUE">
+                              <block type="logic_boolean" id="B!cn*|o[HdGUo{Wm~dOk">
+                                <field name="BOOL">FALSE</field>
+                              </block>
+                            </value>
+                          </block>
+                        </next>
+                      </block>
+                    </next>
+                  </block>
+                </next>
+              </block>
+            </statement>
+          </block>
+        </statement>
+      </block>
+    </next>
+  </block>
+  <block type="procedures_defnoreturn" id=";Zl[dmFx6mAl(PeE3S*-" x="713" y="13">
+    <field name="NAME">Pumpenzyklus</field>
+    <comment pinned="false" h="80" w="160">Beschreibe diese Funktion …</comment>
+    <statement name="STACK">
+      <block type="debug" id="mV:*P_Q~%(B5SR5Lmh`v">
+        <field name="Severity">log</field>
+        <value name="TEXT">
+          <shadow type="text" id="n{zY@~9Jw}fQ(Ke6.!(2">
+            <field name="TEXT">Pumpenzyklus wird aufgerufen. Pumpe wird eingeschaltet.</field>
+          </shadow>
+        </value>
+        <next>
+          <block type="procedures_callnoreturn" id=",xew$(lN6rF+Xnf}y.MN">
+            <mutation name="stopTimeouts"></mutation>
+            <next>
+              <block type="control" id="^Gf62(OL*{n/AF3}h-s0">
+                <mutation xmlns="http://www.w3.org/1999/xhtml" delay_input="false"></mutation>
+                <field name="OID">0_userdata.0.Test.Tutorial.Pumpe_Switch</field>
+                <field name="WITH_DELAY">FALSE</field>
+                <value name="VALUE">
+                  <block type="logic_boolean" id="@^|17w.R?0O+23~.p4Gq">
+                    <field name="BOOL">TRUE</field>
+                  </block>
+                </value>
+                <next>
+                  <block type="timeouts_settimeout" id="7Ht[!l.O#Pv(Yt$|9kd%">
+                    <field name="NAME">Pumpenlaufzeit</field>
+                    <field name="DELAY">10</field>
+                    <field name="UNIT">sec</field>
+                    <statement name="STATEMENT">
+                      <block type="control" id="4}f+Xh+,[39^2uBOQfdI">
+                        <mutation xmlns="http://www.w3.org/1999/xhtml" delay_input="false"></mutation>
+                        <field name="OID">0_userdata.0.Test.Tutorial.Pumpe_Switch</field>
+                        <field name="WITH_DELAY">FALSE</field>
+                        <value name="VALUE">
+                          <block type="logic_boolean" id="/1cATQ)I=FNpp9-=Y?}i">
+                            <field name="BOOL">FALSE</field>
+                          </block>
+                        </value>
+                        <next>
+                          <block type="timeouts_settimeout" id="Nh7Z2L1({VO]RxQId2!c">
+                            <field name="NAME">Wartezeit</field>
+                            <field name="DELAY">10</field>
+                            <field name="UNIT">sec</field>
+                            <statement name="STATEMENT">
+                              <block type="debug" id="{;-.%T=qVFk.$cQIm7b#">
+                                <field name="Severity">log</field>
+                                <value name="TEXT">
+                                  <shadow type="text" id="fFiJH+kxTM|bE%ZJ|}x8">
+                                    <field name="TEXT">Pumpe Pause. Wartezeit wird gestartet</field>
+                                  </shadow>
+                                </value>
+                                <next>
+                                  <block type="procedures_callnoreturn" id="So;NXJ;%ON399_@{e]tG">
+                                    <mutation name="Pumpenzyklus"></mutation>
+                                  </block>
+                                </next>
+                              </block>
+                            </statement>
+                          </block>
+                        </next>
+                      </block>
+                    </statement>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </statement>
+  </block>
+  <block type="procedures_defnoreturn" id="cN@a6[U?T@y]|Q1lTXM(" x="713" y="388">
+    <field name="NAME">stopTimeouts</field>
+    <comment pinned="false" h="80" w="160">Beschreibe diese Funktion …</comment>
+    <statement name="STACK">
+      <block type="timeouts_cleartimeout" id="9h-#1@6yDgM+Rza[:gRz">
+        <field name="NAME">Pumpenlaufzeit</field>
+        <next>
+          <block type="timeouts_cleartimeout" id="*%h:GX2VG%q,1H=2S;ev">
+            <field name="NAME">Wartezeit</field>
+          </block>
+        </next>
+      </block>
+    </statement>
+  </block>
+</xml>
