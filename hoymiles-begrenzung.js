@@ -78,7 +78,11 @@ async function onReady() {
         await setWechselrichterLeistungen();
     };
 
-    on({ id: [objLeistungHaus, objBegrenzung] , change: "ne" }, updateMaxGesamtLeistung); 
+    if (batterie.laden) {
+        on({ id: objLeistungHaus, change: "ne" }, updateMaxGesamtLeistung);
+    } else {
+        on({ id: objBegrenzung, change: "ne" }, updateMaxGesamtLeistung);
+    }
 }
 
 async function setStates() {
