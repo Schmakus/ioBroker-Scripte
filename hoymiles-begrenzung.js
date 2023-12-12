@@ -72,17 +72,13 @@ async function onReady() {
     }
 
     const updateMaxGesamtLeistung = async (obj) => {
-        maxGesamtLeistung = obj.state.val;
-        await setStateAsync(objBegrenzung, { val: maxGesamtLeistung, ack: true });
-        console.log(`Aktuelle Begrenzung Soll: ${maxGesamtLeistung}`);
-        await setWechselrichterLeistungen();
-    };
-
-    if (batterie.laden) {
-        on({ id: objLeistungHaus, change: "ne" }, updateMaxGesamtLeistung);
-    } else {
-        on({ id: objBegrenzung, change: "ne" }, updateMaxGesamtLeistung);
-    }
+            maxGesamtLeistung = (await getStateAsync(objBegrenzung)).val || 800;
+            await setStateAsync(objBegrenzung, { val: maxGesamtLeistung, ack: true });
+            console.log(`Aktuelle Begrenzung Soll: ${maxGesamtLeistung}`);
+            await setWechselrichterLeistungen();
+     };
+    
+    on({ id: [objLeistungHaus, objBegrenzung], change: "ne" }, updateMaxGesamtLeistung);
 }
 
 async function setStates() {
