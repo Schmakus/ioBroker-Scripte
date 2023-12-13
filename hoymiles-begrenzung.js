@@ -1,6 +1,6 @@
 /*
   * Script zur Begrenzung von Hoymiles Wechselrichter in Verbindung mit openDTU
-  * v0.0.2 2023/12/12 by Schmakus
+  * v0.0.3 2023/12/12 by Schmakus
   * http://www.github.com/Schmakus/ioBroker-Scripte/
   *
   * Es werden folgende eigene Datenpunkte erstellt:
@@ -141,13 +141,25 @@ async function getMaximaleLeistungen() {
 }
 
 /**
+ * Berechnet die Summe aller aktuellen Leistungen der Wechselrichter.
+ */
+async function getAktuelleLeistungSumme() {
+  let summe = 0;
+  // Iteriere durch jedes Wechselrichter-Objekt
+  for (const wr of Object.values(wechselrichter)) {
+      summe = summe + wr.aktuelleLeistung;
+  }
+  return summe;
+};
+
+/**
  * Berechnet die Summe aller maxLeistung-Werte im Wechselrichter-Objekt.
  */
 async function getMaxLeistungSumme() {
   let summe = 0;
   // Iteriere durch jedes Wechselrichter-Objekt
   for (const wr of Object.values(wechselrichter)) {
-      summe = summe + wr.aktuelleLeistung;
+      summe = summe + wr.maxLeistung;
   }
   return summe;
 };
@@ -168,7 +180,7 @@ async function getMaxBegrenzungSumme() {
  * Berechnet die maximale Leistung und setzt die Begrenzung der Wechselrichter.
  */
 async function setWechselrichterLeistungen() {
-    const aktuelleLeistungen = await getMaxLeistungSumme();
+    const aktuelleLeistungen = await getAktuelleLeistungSumme();
     console.log(`Aktuelle Gesamtleistung der Wechselrichter: ${aktuelleLeistungen}`);
 
     const faktor = maxGesamtLeistung / aktuelleLeistungen;
@@ -194,12 +206,12 @@ async function setWechselrichterLeistungen() {
     );
 
     const begrenzteLeistungIst = await getMaxBegrenzungSumme();
-    const begrenzteLeistungIstInProzent = Math.round((begrenzteLeistungIst / maxGesamtLeistung) * 10000) / 100; // Runden auf 2 Nachkommastellen
+    const begrenzteLeistungIstInProzent = Math.round((begrenzteLeistungIst / await getMaxLeistungSumme()) * 10000) / 100; // Runden auf 2 Nachkommastellen
     await Promise.all([
       setStateAsync(objBegrenzungIst, { val: begrenzteLeistungIst, ack: true }),
       setStateAsync(objBegrenzungIstProzent, { val: begrenzteLeistungIstInProzent, ack: true })
     ]);
-    console.log(`Gesamtbegrenzung nach Anpassung: ${begrenzteLeistungIst}W, ${begrenzteLeistungIstInProzent}%`);
+    console.log(`Gesamtbegrenzung nach Anpassung: ${begrenzteLeistungIst}W, ${begrenzteLeistungIstInProzent}%, maxLeistungWR: ${maxGesamtLeistung}W`);
     
     //Batterieladung
     await loadBattery(aktuelleLeistungen);
