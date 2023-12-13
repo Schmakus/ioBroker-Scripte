@@ -1,4 +1,4 @@
-//**
+/*
   * Script zur Begrenzung von Hoymiles Wechselrichter in Verbindung mit openDTU
   * v0.0.2 2023/12/12 by Schmakus
   * http://www.github.com/Schmakus/ioBroker-Scripte/
@@ -9,7 +9,7 @@
   *    BegrenzungIstInProzent:  Aktuelle Begrenzung in Prozent über alle Wechselrichter
   *
   * Info: Die Objekt-IDs im Wechselrichter Objekt sind nur zum Test und müssen mit den richtigen Datenpunkten der Wechselrichter, usw. ersetzt werden!
-  */
+ */
 
 //Wo sollen die eigenen Datenpunkte angelegt werden?
 const path = "0_userdata.0.PV";
@@ -65,6 +65,8 @@ let maximaleLeistungen = [];
 let entpreller = null;
 let maxGesamtLeistung = 0;
 let objBegrenzung = "";
+let objBegrenzungIst = "";
+let objBegrenzungIstProzent = "";
 
 /**
  * Diese Funktion wird aufgerufen, wenn das System bereit ist.
@@ -98,7 +100,7 @@ async function setStates() {
     // Maximal zulässige Gesamtleistung
     await createStateAsync(`${path}.BegrenzungSoll`, 800, { read: true, write: true, name: 'Begrenzung Wechselrichter in Summe', type: "number", role: "state", unit: "W", def: 800 });
     await createStateAsync(`${path}.BegrenzungIst`, 0, { read: true, write: false, name: 'Ist-Begrenzung Wechselrichter in Summe [Watt]', type: "number", role: "value", unit: "W", def: 0 });
-    await createStateAsync(`${path}.BegrenzungIstInProzent`, 0, { read: true, write: false, name: 'Ist-Begrenzung Wechselrichter in Summe [Prozent]', type: "number", role: "value", unit: "%" def: 0 });
+    await createStateAsync(`${path}.BegrenzungIstInProzent`, 0, { read: true, write: false, name: 'Ist-Begrenzung Wechselrichter in Summe [Prozent]', type: "number", role: "value", unit: "%", def: 0 });
     objBegrenzung = `${path}.BegrenzungSoll`;
     objBegrenzungIst = `${path}.BegrenzungIst`;
     objBegrenzungIstProzent = `${path}.BegrenzungIstInProzent`;
@@ -195,7 +197,7 @@ async function setWechselrichterLeistungen() {
     const begrenzteLeistungIstInProzent = Math.round((begrenzteLeistungIst / maxGesamtLeistung) * 10000) / 100; // Runden auf 2 Nachkommastellen
     await Promise.all([
       setStateAsync(objBegrenzungIst, { val: begrenzteLeistungIst, ack: true }),
-      setStateAsync(objBegrenzungIstInProzent, { val: begrenzteLeistungIstInProzent, ack: true })
+      setStateAsync(objBegrenzungIstProzent, { val: begrenzteLeistungIstInProzent, ack: true })
     ]);
     console.log(`Gesamtbegrenzung nach Anpassung: ${begrenzteLeistungIst}W, ${begrenzteLeistungIstInProzent}%`);
     
@@ -223,7 +225,7 @@ async function loadBattery(aktuelleLeistungen) {
           await setStateAsync(batterie.objLadungVolt, { val: ladeLeistungVolt, ack: false });
           break;
         default:
-          console.warn(Keine Einheit für die Batterieladung angegeben oder Einheit entspricht nicht 'watt', 'volt' oder 'percent'!");
+          console.warn(`Keine Einheit für die Batterieladung angegeben oder Einheit entspricht nicht 'watt', 'volt' oder 'percent'!`);
         
       };
       console.log(`Aktueller Überschuss: ${ueberschuss}, Ladeleistung: ${ladeLeistung}W, ${ladeLeistungProzent}%, ${ladeLeistungVolt}`);
