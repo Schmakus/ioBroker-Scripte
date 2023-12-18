@@ -22,7 +22,7 @@ const inverters = [
   },
 ]
 
-const powerPhaseA = -400;
+const powerPhaseA = -290;
 const powerPhaseB = 0;
 const powerPhaseC = 0;
 
@@ -37,7 +37,7 @@ async function check() {
   const limitSum = await percent(neededPower, maxInverterSumme, 100);
   console.log(`limitSum: ${limitSum} %, neededPower: ${neededPower} W, gridSum: ${gridSum} W, maxInverterPower: ${maxInverterSumme}`);
   
-  if (powerSum >= -300 && powerSum <= 0  || (neededPower - gridSum) < 100) {
+  if (powerSum >= -300 && powerSum <= 0 || ((neededPower - gridSum) < 100 && powerSum > 0)) {
     	console.log(`Nichts zu tun. Erzeugte Leistung liegt im Bereich der gemessen Leistung`);
       await reload();
       return;
@@ -53,7 +53,8 @@ async function check() {
     //console.log(`${inverter.name}: Factor = ${factor}, newLimitPercent = ${newLimitPercent} %, new maximumPower = ${newlimitPower} W`);
     
     await setLimit(inverter, newLimitPercent);  
-  }  
+  }
+  
   await reload();
 }
 
@@ -104,8 +105,13 @@ async function percentAndLimit(power1, power2, factor) {
 }
 
 async function reload() {
-  await new Promise(resolve => setTimeout(resolve, 5000));
-  await check();
+  for (let i = 5; i > 0; i--) {
+    //console.log(`Countdown: ${i} Sekunden verbleiben...`);
+    await new Promise(resolve => setTimeout(resolve, 1000)); // 1 Sekunde Verzögerung
+  }
+  //await check();
 }
 
 check();
+
+
